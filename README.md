@@ -111,8 +111,6 @@ flowchart TD
     T --> B
 ```
 
-GitHub dibuja este diagrama directamente. También está como imagen en [`docs/img/flujo_analizador.png`](docs/img/flujo_analizador.png) y su código en `docs/diagramas/flujo_analizador.mmd`.
-
 Si falla la conexión POP3, SMTP o la base de datos, el error y su traza se anotan en `logs/error.log`, y el monitor reintenta en el próximo ciclo sin detenerse.
 
 ---
@@ -426,9 +424,9 @@ La clase `Registro` escribe dos archivos en la carpeta `logs/` para la auditorí
 
 ```
 # logs/access.log
-2026-11-14 17:02:08 | pablosabea@gmail.com | LISUSU["tutor"] | ÉXITO | 2 usuario(s) listados
-2026-11-14 17:02:08 | pjarandiar126@ficct.uagrm.edu.bo | LISUSU["*"] | ERROR | No tiene permiso para ejecutar LISUSU. ...
-2026-11-14 17:02:09 | pablosabea@gmail.com | INSUSU["1000001",...,"******","secretaria"] | ERROR | Ya existe un usuario con CI 1000001.
+2026-11-14 17:02:08 | pablo@gmail.com | LISUSU["tutor"] | ÉXITO | 2 usuario(s) listados
+2026-11-14 17:02:08 | pja6@ficct.uagrm.edu.bo | LISUSU["*"] | ERROR | No tiene permiso para ejecutar LISUSU. ...
+2026-11-14 17:02:09 | pablo@gmail.com | INSUSU["1000001",...,"******","secretaria"] | ERROR | Ya existe un usuario con CI 1000001.
 
 # logs/error.log
 2026-11-14 17:02:23 | ConexionBD · inicio | Connection to db.tecnoweb.org.bo:5432 refused. ...
@@ -454,7 +452,7 @@ Además, cada correo queda en la tabla `correos_procesados` y cada comando exito
 
 ## Pruebas
 
-- **Unitarias:** 17 pruebas JUnit 5 del analizador del asunto (`mvn test`).
+
 - **Integración:** cada caso de uso se probó con servidores POP3/SMTP simulados y una base local.
 - **Aceptación:** 30 casos con correos reales enviados desde Gmail a `grupo03sa@tecnoweb.org.bo` (detalle en el Anexo B del informe).
 
@@ -463,12 +461,5 @@ Además, cada correo queda en la tabla `correos_procesados` y cada comando exito
 ## Documentación y diagramas
 
 - `docs/diagramas/`: código **PlantUML** de todos los diagramas del informe (casos de uso, paquetes, comunicación, secuencia, clases, despliegue, MER, estados y actividad) y el diagrama de flujo del analizador en Mermaid.
-- El informe técnico (PUDS) se entrega impreso el día de la defensa.
 
 ![Diagrama general de casos de uso](docs/img/cu_0_general.png)
-
-Para regenerar una imagen:
-
-```bash
-java -jar plantuml.jar docs/diagramas/cu_0_general.puml
-```

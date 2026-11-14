@@ -5,9 +5,9 @@
 --
 --  Contraseña de todos los usuarios de prueba: Titulados2026*
 --  Usuarios REALES (envían comandos por correo):
---    id 1  · Pablo Arandia  · pablosabea@gmail.com              · administrador
---    id 2  · Ronald Campos  · ronaldcv95@gmail.com              · director
---    id 10 · Joaquin Rioja  · pjarandiar126@ficct.uagrm.edu.bo  · estudiante
+--    id 1  · Pablo Arandia  · pabl@gmail.com              · administrador
+--    id 2  · Ronald Campos  · ronald@gmail.com              · director
+--    id 10 · Joaquin Rioja  · pjar@ficct.uagrm.edu.bo  · estudiante
 --  El resto de usuarios son ficticios (solo datos de prueba).
 --  (hash bcrypt; en la versión e-mail el usuario se identifica por su
 --   correo remitente, que debe existir en usuarios.email)
