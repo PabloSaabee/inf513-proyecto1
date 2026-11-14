@@ -1,0 +1,33 @@
+# =====================================================================
+#  Configuración del sistema · Grupo 03 SA
+# =====================================================================
+
+# --- Correo (servidor de la facultad) ---
+mail.servidor=mail.tecnoweb.org.bo
+mail.pop3.puerto=110
+mail.smtp.puerto=25
+mail.usuario=grupo03sa
+mail.password=CAMBIAR
+mail.direccion=grupo03sa@tecnoweb.org.bo
+# Cada cuántos segundos se revisa el buzón
+mail.intervalo.segundos=10
+# Borra del buzón (DELE) los correos ya procesados
+mail.borrar.procesados=true
+# Envía avisos por correo a los usuarios involucrados (tutor, tribunales...)
+mail.notificar=true
+# SMTP: STARTTLS y AUTH se usan solo si el servidor los ofrece
+mail.smtp.starttls=true
+mail.smtp.auth=true
+mail.smtp.confiar.certificado=true
+# mail.smtp.ehlo=mail.tecnoweb.org.bo
+# Muestra en consola el diálogo  en consola
+mail.debug=false
+
+# --- Base de datos PostgreSQL ---
+db.url=jdbc:postgresql://db.tecnoweb.org.bo:5432/db_grupo03sa
+db.usuario=grupo03sa
+db.password=CAMBIAR
+
+# --- Logs locales (error.log y access.log) ---
+# Carpeta relativa a donde se ejecuta el programa
+log.directorio=logs

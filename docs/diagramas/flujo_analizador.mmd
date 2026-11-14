@@ -1,0 +1,31 @@
+flowchart TD
+    A(["Cada 10 s: conectar por POP3<br/>USER / PASS / UIDL"]) --> B{"¿Hay correos con UID<br/>no registrado?"}
+    B -- No --> Z(["QUIT y esperar el próximo ciclo"])
+    B -- Sí --> C["TOP n 0: leer cabeceras<br/>decodificar asunto RFC 2047 / UTF-8"]
+    C --> D{"¿Message-ID ya procesado?"}
+    D -- Sí --> I1["Omitir<br/>access.log: IGNORADO"]
+    D -- No --> E{"¿Rebote o respuesta<br/>automática?"}
+    E -- Sí --> I1
+    E -- No --> F{"1. ¿Remitente registrado<br/>y activo?"}
+    F -- No --> ERR["Correo de ERROR<br/>motivo + sintaxis + ejemplo"]
+    F -- Sí --> G["Normalizar asunto: quitar Re:/Fwd:,<br/>comillas tipográficas y espacios extra"]
+    G --> H{"2. ¿Formato<br/>COMANDO[“p1”,“p2”,…]?"}
+    H -- No --> ERR
+    H -- Sí --> J{"3. ¿El comando existe<br/>en el catálogo?"}
+    J -- No --> ERR
+    J -- Sí --> K{"4. ¿Cantidad de<br/>parámetros correcta?"}
+    K -- No --> ERR
+    K -- Sí --> L{"5. ¿El rol tiene<br/>el permiso?"}
+    L -- No --> ERR
+    L -- Sí --> M{"6. Validador: ¿tipos y formatos<br/>de los parámetros correctos?"}
+    M -- No --> ERR
+    M -- Sí --> N["Ejecutar en PostgreSQL<br/>PreparedStatement + transacción"]
+    N -- "SQLException<br/>(trigger, UNIQUE, CHECK…)" --> ERR2["Correo de ERROR detallado<br/>error.log con la traza"]
+    N -- OK --> OK["Correo de ÉXITO en HTML<br/>(+ CSV en los reportes)"]
+    ERR --> R["SMTP: responder al remitente<br/>en el mismo hilo (In-Reply-To)"]
+    ERR2 --> R
+    OK --> R
+    R --> S["Guardar en correos_procesados<br/>access.log: ÉXITO / ERROR"]
+    S --> T["DELE n (se borra al hacer QUIT)"]
+    I1 --> T
+    T --> B
