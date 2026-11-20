@@ -22,6 +22,7 @@ mail.smtp.confiar.certificado=true
 # mail.smtp.ehlo=mail.tecnoweb.org.bo
 # Muestra en consola el diálogo  en consola
 mail.debug=false
+mail.ignorar.no.registrados=true
 
 # --- Base de datos PostgreSQL ---
 db.url=jdbc:postgresql://db.tecnoweb.org.bo:5432/db_grupo03sa

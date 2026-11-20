@@ -2,6 +2,7 @@ package org.example.correo;
 
 import org.example.config.Config;
 import org.example.datos.DCorreoProcesado;
+import org.example.datos.DUsuario;
 import org.example.interprete.ProcesadorComando;
 import org.example.interprete.Respuesta;
 import org.example.util.Registro;
@@ -32,8 +33,11 @@ public class MonitorBuzon {
 
     private final ProcesadorComando procesador;
     private final DCorreoProcesado dCorreo = new DCorreoProcesado();
+    private final DUsuario dUsuario = new DUsuario();
     private final int intervaloSegundos;
     private final boolean borrarProcesados;
+    /** true: los correos de remitentes no registrados se ignoran sin responder (protección contra inundación). */
+    private final boolean ignorarNoRegistrados;
     private volatile boolean activo = true;
     /** Correos repetidos (mismo Message-ID que uno ya procesado) vistos en esta ejecución. */
     private final Set<String> uidsRepetidos = new HashSet<>();
@@ -42,12 +46,14 @@ public class MonitorBuzon {
         this.procesador = procesador;
         this.intervaloSegundos = Config.getInt("mail.intervalo.segundos");
         this.borrarProcesados = Config.getBoolean("mail.borrar.procesados", true);
+        this.ignorarNoRegistrados = Config.getBoolean("mail.ignorar.no.registrados", true);
     }
 
     /** Bloquea el hilo actual hasta que se llame a detener() (o Ctrl+C). */
     public void iniciar() {
         log("Monitor iniciado · revisa " + Config.get("mail.direccion") + " cada " + intervaloSegundos + " s"
-                + (borrarProcesados ? " · borra los procesados" : " · NO borra los procesados"));
+                + (borrarProcesados ? " · borra los procesados" : " · NO borra los procesados")
+                + (ignorarNoRegistrados ? " · ignora remitentes no registrados" : " · responde a remitentes no registrados"));
         while (activo) {
             try {
                 ejecutarCiclo();
@@ -89,13 +95,41 @@ public class MonitorBuzon {
             if (nuevos.isEmpty()) return;
 
             log(nuevos.size() + " correo(s) nuevo(s)");
+            // Remitentes registrados: una sola consulta por ciclo
+            Set<String> emailsRegistrados = ignorarNoRegistrados ? dUsuario.emailsRegistrados() : Set.of();
+            int ignorados = 0;
             for (int numero : nuevos) {
                 Correo c = ParserCorreo.analizar(numero, uids.get(numero), pop.cabeceras(numero));
+                if (ignorarNoRegistrados && !esRemitenteRegistrado(c, emailsRegistrados)) {
+                    // Protección contra inundación: no se responde ni se guarda en la base
+                    ignorarNoRegistrado(c);
+                    ignorados++;
+                    if (borrarProcesados) pop.eliminar(numero);
+                    continue;
+                }
                 if (procesarCorreo(c) && borrarProcesados) {
                     pop.eliminar(numero);
                 }
             }
+            if (ignorados > 0) {
+                log("  " + ignorados + " correo(s) de remitentes no registrados: ignorados sin responder");
+            }
         }   // QUIT: aplica los DELE
+    }
+
+    private static boolean esRemitenteRegistrado(Correo c, Set<String> emailsRegistrados) {
+        return c.remitente() != null && emailsRegistrados.contains(c.remitente().trim().toLowerCase());
+    }
+
+    /**
+     * Correo de un remitente que no está en la tabla usuarios: no se responde (así un ataque
+     * de muchos correos no genera respuestas), no se guarda en correos_procesados y solo
+     * queda una línea IGNORADO en access.log. Su UID se recuerda para no volver a anotarlo
+     * si el buzón no se vacía.
+     */
+    private void ignorarNoRegistrado(Correo c) {
+        uidsRepetidos.add(c.uid());
+        Registro.acceso(c.remitente(), c.asunto(), "IGNORADO", "Remitente no registrado: no se responde");
     }
 
     /** @return true si el correo quedó registrado (y por lo tanto se puede borrar del buzón). */

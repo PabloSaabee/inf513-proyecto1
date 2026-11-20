@@ -140,6 +140,21 @@ public class DUsuario {
     }
 
     /** ¿Otro usuario (distinto de excluirId) ya usa este email? excluirId = 0 para no excluir. */
+    /**
+     * Emails de todos los usuarios registrados (en minúsculas), sin importar su estado.
+     * El monitor lo carga una vez por ciclo para descartar, sin responder, los correos
+     * de remitentes desconocidos (protección contra inundación de correos).
+     */
+    public Set<String> emailsRegistrados() throws SQLException {
+        Set<String> emails = new java.util.HashSet<>();
+        try (Connection cn = ConexionBD.getConexion();
+             PreparedStatement ps = cn.prepareStatement("SELECT LOWER(email) FROM usuarios");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) emails.add(rs.getString(1));
+        }
+        return emails;
+    }
+
     public boolean emailEnUso(String email, long excluirId) throws SQLException {
         return existe("SELECT 1 FROM usuarios WHERE LOWER(email) = LOWER(?) AND id <> " + excluirId, email);
     }
