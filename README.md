@@ -170,7 +170,7 @@ Reglas implementadas en la propia base:
 
 **Modelo entidad-relación (MER)** con las 34 tablas y las 57 relaciones:
 
-![Modelo entidad-relación](docs/img/bd_0_conceptual_general.png)
+![Modelo entidad-relación](docs/img/bd_0_conceptual_general.jpeg)
 
 ---
 
@@ -219,7 +219,6 @@ cp src/main/resources/config.properties.ejemplo src/main/resources/config.proper
 | `db.url`, `db.usuario`, `db.password` | Conexión a PostgreSQL (`jdbc:postgresql://db.tecnoweb.org.bo:5432/db_grupo03sa`) |
 | `log.directorio` | Carpeta de `access.log` y `error.log` (`logs`) |
 
-> `config.properties` contiene contraseñas: está en el `.gitignore` y **no se sube** al repositorio.
 
 ### 4. Ejecutar
 
@@ -460,6 +459,6 @@ Además, cada correo queda en la tabla `correos_procesados` y cada comando exito
 
 ## Documentación y diagramas
 
-- `docs/diagramas/`: código **PlantUML** de todos los diagramas del informe (casos de uso, paquetes, comunicación, secuencia, clases, despliegue, MER, estados y actividad) y el diagrama de flujo del analizador en Mermaid.
+- `docs/diagramas/`: Diagramas.
 
 ![Diagrama general de casos de uso](docs/img/cu_0_general.png)
